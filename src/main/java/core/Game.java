@@ -2,7 +2,10 @@ package core;
 
 import java.util.Random;
 
-public class BitBoard {
+public class Game {
+
+	private static volatile Game gameInstance = new Game();
+
 	private long[] bitboards = new long[14];
 	private byte[] board = new byte[64];
 	private long[] epTargetSquares = new long[2];
@@ -33,7 +36,7 @@ public class BitBoard {
 	// Stores en passant target squares for each side
 	public long[][] epHistory;
 
-	public BitBoard() {
+	private Game() {
 		// Instantiate the history arrays
 		moveHistory = new long[CoreConstants.MAX_MOVES];
 		whiteHistory = new long[CoreConstants.MAX_MOVES];
@@ -48,6 +51,12 @@ public class BitBoard {
 		boardHistory = new byte[CoreConstants.MAX_MOVES][64];
 		epHistory = new long[2][CoreConstants.MAX_MOVES];
 		castlingHistory = new long[2][CoreConstants.MAX_MOVES];
+	}
+
+	public static Game getGameInstance() {
+		if (gameInstance == null)
+			gameInstance = new Game();
+		return gameInstance;
 	}
 
 	public void loadFen(String board) {
@@ -467,7 +476,7 @@ public class BitBoard {
 				| (CoreConstants.KNIGHT_TABLE[kingIndex] & enemyKnights)
 				| (bishopAttacks(occupiedBoard, kingIndex, side) & enemyBishopQueen)
 				| (rookAttacks(occupiedBoard, kingIndex, side) & enemyRookQueen);
-		return (BitBoard.bitScanForward(result) != -1);
+		return (Game.bitScanForward(result) != -1);
 	}
 
 	// If there are no available moves and the player is in check, then it is
@@ -521,7 +530,7 @@ public class BitBoard {
 				| (CoreConstants.KNIGHT_TABLE[index] & enemyKnights)
 				| (bishopAttacks(occupiedBoard, index, side) & enemyBishopQueen)
 				| (rookAttacks(occupiedBoard, index, side) & enemyRookQueen);
-		return (BitBoard.bitScanForward(result) != -1);
+		return (Game.bitScanForward(result) != -1);
 	}
 
 	// Bishop and Rook attacks for purpose of determing status of check

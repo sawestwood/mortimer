@@ -10,11 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import core.BitBoard;
-import core.CoreConstants;
-import core.Main;
-import core.Move;
-import core.MoveGen;
+import core.*;
+import core.Game;
 import eval.EvalConstants;
 import eval.Search;
 import javafx.beans.value.ChangeListener;
@@ -45,7 +42,7 @@ public class MainController {
 	private LinkedList<Integer> blueSquares = new LinkedList<>();
 	private int oldPos;
 	private Search search = new Search();
-	private BitBoard board;
+	private Game board;
 	private String[] pgnHistory = new String[CoreConstants.MAX_MOVES];
 	private LinkedList<Move> moveList = new LinkedList<>();
 
@@ -59,7 +56,7 @@ public class MainController {
 		MoveGen.generateMoveDatabase(true);
 		MoveGen.generateMoveDatabase(false);
 		// Initialise the hash function
-		BitBoard.initialiseZobrist();
+		Game.initialiseZobrist();
 		// This allows the user to change how long it takes for the AI to select
 		// moves $\label{code:movespeed}$
 		moveSpeedSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -74,7 +71,7 @@ public class MainController {
 
 	}
 
-	private double paintChessBoard(BitBoard board) {
+	private double paintChessBoard(Game board) {
 		GraphicsContext g = chessPane.getGraphicsContext2D();
 		double width = chessPane.getWidth();
 		double height = chessPane.getHeight();
@@ -121,7 +118,7 @@ public class MainController {
 
 	public void setupGame() {
 		// New board which is then reset $\label{code:setupgame}$
-		board = new BitBoard();
+		board = Game.getGameInstance();
 		board.resetToInitialSetup();
 		pgnTextField.setText("");
 		moveList = MoveGen.generateMoves(board, true);
@@ -135,7 +132,7 @@ public class MainController {
 		g.clearRect(0, 0, chessPane.getWidth(), chessPane.getHeight());
 	}
 
-	private void clickListener(BitBoard board, MouseEvent evt, double cellSize) {
+	private void clickListener(Game board, MouseEvent evt, double cellSize) {
 		// Get the position clicked in terms of the board
 		double x = evt.getX();
 		double y = evt.getY();
@@ -209,7 +206,7 @@ public class MainController {
 		return result;
 	}
 
-	public void move(BitBoard board, Move move, boolean repaint) {
+	public void move(Game board, Move move, boolean repaint) {
 		boolean capture = board.getBoardArray()[move.getFinalPos()] != CoreConstants.EMPTY;
 		board.move(move);
 		// Even piece id means white piece, odd mean black piece
@@ -241,7 +238,7 @@ public class MainController {
 
 	// Displays the appropriate message when a player has lost or drawn
 	// $\label{code:dispend}$
-	private void displayEndGameMessage(BitBoard board) {
+	private void displayEndGameMessage(Game board) {
 		boolean aiLost = board.checkmate(UIConstants.AI_COLOUR);
 		boolean playerLost = board.checkmate(UIConstants.PLAYER_COLOUR);
 		boolean stalemate = board.stalemate(board.toMove);
@@ -270,7 +267,7 @@ public class MainController {
 
 	// Displays a dialog giving the player the choice of which piece to convert
 	// their pawn to $\label{code:pawnPromotion}$
-	private void pawnPromotion(int pawnOldPos, int newPos, int side, BitBoard board,
+	private void pawnPromotion(int pawnOldPos, int newPos, int side, Game board,
 			boolean display) {
 		board.removePiece(pawnOldPos);
 		if (display) {
@@ -323,7 +320,7 @@ public class MainController {
 		}
 	}
 
-	private void moveAI(BitBoard board) {
+	private void moveAI(Game board) {
 		// Use the search class to select the best move
 		int colorFactor = (UIConstants.AI_COLOUR == 0) ? EvalConstants.WHITE : EvalConstants.BLACK;
 		Move move = search.rootNegamax(board, colorFactor);
@@ -334,7 +331,7 @@ public class MainController {
 
 	// PGN is the notation used to represent the moves played so far in the
 	// chess game $\label{code:updatePGN}$
-	private void updatePGNTextField(BitBoard board, Move move, boolean capture) {
+	private void updatePGNTextField(Game board, Move move, boolean capture) {
 		String result = "";
 		// New line after every two moves
 		if (board.getMoveNumber() % 2 == 0) {

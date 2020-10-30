@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import core.BitBoard;
+import core.Game;
 import core.Move;
 import core.MoveGen;
 
@@ -16,7 +16,7 @@ public class Search {
 	// This is the method that is accessed from the main controller class, and
 	// returns what the program deems to be the best available move to a
 	// particular colour. $\label{code:rootNegamax}$
-	public Move rootNegamax(BitBoard board, int color) {
+	public Move rootNegamax(Game board, int color) {
 		long overallStartTime = System.currentTimeMillis();
 		double maxScore = Double.NEGATIVE_INFINITY;
 		double minScore = Double.POSITIVE_INFINITY;
@@ -68,7 +68,7 @@ public class Search {
 
 	// Search algorithm used with negamax (minimax variant), supposed to be more
 	// efficient and produce the same result $\label{code:mtdf}$
-	private double mtdf(BitBoard board, double firstGuess, int depth, int color) {
+	private double mtdf(Game board, double firstGuess, int depth, int color) {
 		double g = firstGuess;
 		double upperBound = Double.POSITIVE_INFINITY;
 		double lowerBound = Double.NEGATIVE_INFINITY;
@@ -85,7 +85,7 @@ public class Search {
 	}
 
 	// Color Factor: 1 for white, -1 for black $\label{code:negamax}$
-	private double negamax(double alpha, double beta, BitBoard board, int depth, int colorFactor) {
+	private double negamax(double alpha, double beta, Game board, int depth, int colorFactor) {
 		double alphaOrig = alpha;
 		// Check if any of the values have already been computed, if so, return
 		// them from the hash table
@@ -140,7 +140,7 @@ public class Search {
 
 	// Merge sort algorithm to order the moves available by the evaluation value
 	// of the resulting board $\label{code:mergesort}$
-	public List<Move> mergeSort(BitBoard board, List<Move> moves, int colorFactor) {
+	public List<Move> mergeSort(Game board, List<Move> moves, int colorFactor) {
 		int size = moves.size();
 		if (size <= 1) {
 			return moves;
@@ -159,7 +159,7 @@ public class Search {
 	}
 
 	// Algorithm to merge two lists together into a single list
-	public List<Move> merge(BitBoard board, List<Move> left, List<Move> right, int colorFactor) {
+	public List<Move> merge(Game board, List<Move> left, List<Move> right, int colorFactor) {
 		List<Move> result = new LinkedList<>();
 		// Generate iterators for each half of the list
 		Iterator<Move> leftIter = left.iterator();

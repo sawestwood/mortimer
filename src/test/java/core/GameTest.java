@@ -2,18 +2,16 @@ package core;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.LinkedList;
-
 import org.junit.Before;
 import org.junit.Test;
 
-public class BitBoardTest {
+public class GameTest {
 
-    BitBoard board;
+    Game board;
 
     @Before()
     public void setup() {
-        board = new BitBoard();
+        board = Game.getGameInstance();
         board.resetToInitialSetup();
         MoveGen.initialiseKnightLookupTable();
         MoveGen.initialiseKingLookupTable();

@@ -2,14 +2,14 @@ package eval;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-import core.BitBoard;
+import core.Game;
 import core.MoveGen;
 
 public class EvalTest {
 
 	@Test
 	public void testEvaluation() {
-		BitBoard board = new BitBoard();
+		Game board = Game.getGameInstance();
 		MoveGen.initialiseKnightLookupTable();
 		MoveGen.initialiseKingLookupTable();
 		MoveGen.initialisePawnLookupTable();

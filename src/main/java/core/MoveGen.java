@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class MoveGen {
 
-	public static LinkedList<Move> generateMoves(BitBoard board, boolean legal) {
+	public static LinkedList<Move> generateMoves(Game board, boolean legal) {
 		LinkedList<Move> moves = new LinkedList<>();
 		// Generate moves only for the next side to move
 		int side = board.toMove;
@@ -14,37 +14,37 @@ public class MoveGen {
 		long pawnBoard = board.getBitBoards()[side + 2];
 		while (pawnBoard != 0) {
 			// Add moves for each pawn of one of the players
-			addPawnAttacks(board, moves, BitBoard.bitScanForward(pawnBoard), side);
+			addPawnAttacks(board, moves, Game.bitScanForward(pawnBoard), side);
 			pawnBoard &= pawnBoard - 1;
 		}
 		long knightBoard = board.getBitBoards()[side + 4];
 		while (knightBoard != 0) {
 			// Add moves for each knight
-			addKnightMoves(board, moves, BitBoard.bitScanForward(knightBoard), side);
+			addKnightMoves(board, moves, Game.bitScanForward(knightBoard), side);
 			knightBoard &= knightBoard - 1;
 		}
 		long rookBoard = board.getBitBoards()[side + 6];
 		while (rookBoard != 0) {
 			// Add moves for each rook
-			addRookMoves(board, moves, BitBoard.bitScanForward(rookBoard), side);
+			addRookMoves(board, moves, Game.bitScanForward(rookBoard), side);
 			rookBoard &= rookBoard - 1;
 		}
 		long bishopBoard = board.getBitBoards()[side + 8];
 		while (bishopBoard != 0) {
 			// Add moves for each bishop
-			addBishopMoves(board, moves, BitBoard.bitScanForward(bishopBoard), side);
+			addBishopMoves(board, moves, Game.bitScanForward(bishopBoard), side);
 			bishopBoard &= bishopBoard - 1;
 		}
 		long queenBoard = board.getBitBoards()[side + 10];
 		while (queenBoard != 0) {
 			// Add moves for each queen
-			addQueenMoves(board, moves, BitBoard.bitScanForward(queenBoard), side);
+			addQueenMoves(board, moves, Game.bitScanForward(queenBoard), side);
 			queenBoard &= queenBoard - 1;
 		}
 		long kingBoard = board.getBitBoards()[side + 12];
 		while (kingBoard != 0) {
 			// Add moves for the king
-			addKingMoves(board, moves, BitBoard.bitScanForward(kingBoard), side);
+			addKingMoves(board, moves, Game.bitScanForward(kingBoard), side);
 			kingBoard &= kingBoard - 1;
 		}
 
@@ -62,8 +62,8 @@ public class MoveGen {
 				iter.remove();
 			}
 			board.move(move);
-			boolean noWKings = BitBoard.bitScanForward(board.getBitBoards()[CoreConstants.WHITE_KING]) == -1;
-			boolean noBKings = BitBoard.bitScanForward(board.getBitBoards()[CoreConstants.BLACK_KING]) == -1;
+			boolean noWKings = Game.bitScanForward(board.getBitBoards()[CoreConstants.WHITE_KING]) == -1;
+			boolean noBKings = Game.bitScanForward(board.getBitBoards()[CoreConstants.BLACK_KING]) == -1;
 			if(noWKings | noBKings){
 				System.out.println("KING OFF");
 				iter.remove();
@@ -80,9 +80,9 @@ public class MoveGen {
 
 	// Method to check if a king is inside another king's set of moves
 	// I.e. if one king is inside the 3x3 square around the other king
-	private static boolean kingInKingSquare(BitBoard board, int side) {
-		int myKingIndex = BitBoard.bitScanForward(board.getBitBoards()[12 + side]);
-		int enemyKingIndex = BitBoard
+	private static boolean kingInKingSquare(Game board, int side) {
+		int myKingIndex = Game.bitScanForward(board.getBitBoards()[12 + side]);
+		int enemyKingIndex = Game
 				.bitScanForward(board.getBitBoards()[12 + ((side == 0) ? 1 : 0)]);
 		if (((1L << myKingIndex) & CoreConstants.KING_TABLE[enemyKingIndex]) != 0) {
 			return true;
@@ -90,8 +90,8 @@ public class MoveGen {
 		return false;
 	}
 
-	private static LinkedList<Move> removeCheckMoves(BitBoard board, LinkedList<Move> moveList,
-			int side) {
+	private static LinkedList<Move> removeCheckMoves(Game board, LinkedList<Move> moveList,
+                                                     int side) {
 
 		// Iterator has to be used to avoid concurrent modification exception
 		// i.e. so that we can remove from the LinkedList as we loop through it
@@ -118,7 +118,7 @@ public class MoveGen {
 		return moveList;
 	}
 
-/*	private static LinkedList<Move> removeKingInKingSquareMoves(BitBoard board,
+/*	private static LinkedList<Move> removeKingInKingSquareMoves(Game board,
 			LinkedList<Move> moveList, int side) {
 		// Iterator has to be used to avoid concurrent modification exception
 		// i.e. so that we can remove from the LinkedList as we loop through it
@@ -151,7 +151,7 @@ public class MoveGen {
 			// piece could move
 			// Each move is added to an LinkedList containing all the moves
 			// $\label{code:listAdd}$
-			Move move = new Move(pieceType, index, BitBoard.bitScanForward(moves));
+			Move move = new Move(pieceType, index, Game.bitScanForward(moves));
 			move.setCastling(castling);
 			move.setPromotion(promotion);
 			move.setEnPassant(enPassant);
@@ -165,7 +165,7 @@ public class MoveGen {
 	private static void addMovesWithOffset(int pieceType, long moves, LinkedList<Move> moveList,
 			boolean enPassant, boolean promotion, byte castling, int offset) {
 		while (moves != 0) {
-			int to = BitBoard.bitScanForward(moves);
+			int to = Game.bitScanForward(moves);
 			int from = (to - offset) % 64;
 			if (from < 0) {
 				from = 64 + from;
@@ -179,8 +179,8 @@ public class MoveGen {
 		}
 	}
 
-	private static void addRookMoves(BitBoard board, LinkedList<Move> moveList, int index,
-			int side) {
+	private static void addRookMoves(Game board, LinkedList<Move> moveList, int index,
+                                     int side) {
 		int pieceType = (side == 0) ? CoreConstants.WHITE_ROOK : CoreConstants.BLACK_ROOK;
 		// Blockers is all the positions which could stop the rook from moving
 		// further
@@ -201,8 +201,8 @@ public class MoveGen {
 	}
 
 	// Equivalent to the algorithm above
-	private static void addBishopMoves(BitBoard board, LinkedList<Move> moveList, int index,
-			int side) {
+	private static void addBishopMoves(Game board, LinkedList<Move> moveList, int index,
+                                       int side) {
 		int pieceType = (side == 0) ? CoreConstants.WHITE_BISHOP : CoreConstants.BLACK_BISHOP;
 		long bishopBlockers = (board.getBitBoards()[CoreConstants.WHITE]
 				| board.getBitBoards()[CoreConstants.BLACK])
@@ -217,8 +217,8 @@ public class MoveGen {
 	// The moves of the queen are just the moves of a rook as well as the moves
 	// of a bishop in that position
 	// Hence we calculate both of those and then OR the result
-	private static void addQueenMoves(BitBoard board, LinkedList<Move> moveList, int index,
-			int side) {
+	private static void addQueenMoves(Game board, LinkedList<Move> moveList, int index,
+                                      int side) {
 		int pieceType = (side == 0) ? CoreConstants.WHITE_QUEEN : CoreConstants.BLACK_QUEEN;
 		long rookBlockers = (board.getBitBoards()[CoreConstants.WHITE]
 				| board.getBitBoards()[CoreConstants.BLACK])
@@ -243,8 +243,8 @@ public class MoveGen {
 	// Simply lookup the moves of the knight since it is unaffected by the
 	// pieces around it so can be pre-computed easily
 	// Then remove the moves that would 'capture' a friendly piece
-	private static void addKnightMoves(BitBoard board, LinkedList<Move> moveList, int index,
-			int side) {
+	private static void addKnightMoves(Game board, LinkedList<Move> moveList, int index,
+                                       int side) {
 		int pieceType = (side == 0) ? CoreConstants.WHITE_KNIGHT : CoreConstants.BLACK_KNIGHT;
 		long knightMoves = CoreConstants.KNIGHT_TABLE[index] & ~board.getBitBoards()[side];
 		addMoves(pieceType, index, knightMoves, moveList, false, false, CoreConstants.noCastle);
@@ -252,13 +252,13 @@ public class MoveGen {
 
 	// Similary to the knight, king moves can just be looked up
 	// However castling moves have to be calculateds
-	private static void addKingMoves(BitBoard board, LinkedList<Move> moveList, int index,
-			int side) {
+	private static void addKingMoves(Game board, LinkedList<Move> moveList, int index,
+                                     int side) {
 		long moves = CoreConstants.KING_TABLE[index] & ~board.getBitBoards()[side];
 		int pieceType = (side == 0) ? CoreConstants.WHITE_KING : CoreConstants.BLACK_KING;
 		addMoves(pieceType, index, moves, moveList, false, false, CoreConstants.noCastle);
 		// Check for castling moves
-		// Check the castling flags (descirbed in the BitBoard class)
+		// Check the castling flags (descirbed in the Game class)
 		// If some have set bits in the correct position castling is legal, if
 		// so add moves accordingly
 		if (side == CoreConstants.WHITE) {
@@ -284,7 +284,7 @@ public class MoveGen {
 
 	// Based on a tutorial in C++ by Peter Ellis Jones on
 	// https://github.com/peterellisjones/Checkmate
-	private static void addPawnPushes(BitBoard board, LinkedList<Move> moveList, int side) {
+	private static void addPawnPushes(Game board, LinkedList<Move> moveList, int side) {
 		// If side is 0, then the piece is white
 		int pieceType = (side == 0) ? CoreConstants.WHITE_PAWN : CoreConstants.BLACK_PAWN;
 		// Offsets used to add correct moves for white and black
@@ -318,8 +318,8 @@ public class MoveGen {
 				offset + offset);
 	}
 
-	private static void addPawnAttacks(BitBoard board, LinkedList<Move> moveList, int index,
-			int side) {
+	private static void addPawnAttacks(Game board, LinkedList<Move> moveList, int index,
+                                       int side) {
 		int enemy = (side == 0) ? 1 : 0;
 		int pawnType = (side == 0) ? CoreConstants.WHITE_PAWN : CoreConstants.BLACK_PAWN;
 		long[] promotions_mask = { CoreConstants.ROW_8, CoreConstants.ROW_1 };

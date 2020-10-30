@@ -1,24 +1,24 @@
 package eval;
 
-import core.BitBoard;
+import core.Game;
 import core.CoreConstants;
 
 public class Evaluation extends EvalConstants {
 
-	public static double evaluate(BitBoard board, int color) {
+	public static double evaluate(Game board, int color) {
 		// Calculate the number of each type of piece per side $\label{code:evalFunction}$
 		int whiteKing = board.checkmate(CoreConstants.WHITE, CoreConstants.WHITE) ? 0 : 1;
 		int blackKing = board.checkmate(CoreConstants.BLACK, CoreConstants.BLACK) ? 0 : 1;
-		int whiteQueens = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_QUEEN]);
-		int blackQueens = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_QUEEN]);
-		int whiteRooks = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_ROOK]);
-		int blackRooks = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_ROOK]);
-		int whiteBishops = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_BISHOP]);
-		int blackBishops = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_BISHOP]);
-		int whiteKnights = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_KNIGHT]);
-		int blackKnights = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_KNIGHT]);
-		int whitePawns = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_PAWN]);
-		int blackPawns = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_PAWN]);
+		int whiteQueens = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_QUEEN]);
+		int blackQueens = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_QUEEN]);
+		int whiteRooks = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_ROOK]);
+		int blackRooks = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_ROOK]);
+		int whiteBishops = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_BISHOP]);
+		int blackBishops = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_BISHOP]);
+		int whiteKnights = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_KNIGHT]);
+		int blackKnights = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_KNIGHT]);
+		int whitePawns = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_PAWN]);
+		int blackPawns = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_PAWN]);
 		// Workout the difference between how many pieces each side has per type
 		int kDiff = whiteKing - blackKing;
 		int qDiff = whiteQueens - blackQueens;
@@ -100,17 +100,17 @@ public class Evaluation extends EvalConstants {
 		}
 		return color * (materialScore + posScore);
 	}
-	public static double fastEval(BitBoard board, int colorFactor){
-		int whiteQueens = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_QUEEN]);
-		int blackQueens = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_QUEEN]);
-		int whiteRooks = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_ROOK]);
-		int blackRooks = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_ROOK]);
-		int whiteBishops = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_BISHOP]);
-		int blackBishops = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_BISHOP]);
-		int whiteKnights = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_KNIGHT]);
-		int blackKnights = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_KNIGHT]);
-		int whitePawns = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_PAWN]);
-		int blackPawns = BitBoard.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_PAWN]);
+	public static double fastEval(Game board, int colorFactor){
+		int whiteQueens = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_QUEEN]);
+		int blackQueens = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_QUEEN]);
+		int whiteRooks = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_ROOK]);
+		int blackRooks = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_ROOK]);
+		int whiteBishops = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_BISHOP]);
+		int blackBishops = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_BISHOP]);
+		int whiteKnights = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_KNIGHT]);
+		int blackKnights = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_KNIGHT]);
+		int whitePawns = Game.hammingWeight(board.getBitBoards()[CoreConstants.WHITE_PAWN]);
+		int blackPawns = Game.hammingWeight(board.getBitBoards()[CoreConstants.BLACK_PAWN]);
 		// Workout the difference between how many pieces each side has per type
 		int qDiff = whiteQueens - blackQueens;
 		int rDiff = whiteRooks - blackRooks;

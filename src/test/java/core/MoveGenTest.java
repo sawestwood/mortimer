@@ -9,11 +9,11 @@ import org.junit.Test;
 
 public class MoveGenTest {
 
-    BitBoard board;
+    Game board;
 
     @Before()
     public void setup() {
-        board = new BitBoard();
+        board = Game.getGameInstance();
         board.resetToInitialSetup();
         // Initialise the various lookup tables so that move generation works
         // properly
@@ -61,7 +61,7 @@ public class MoveGenTest {
 
     // Perft tests the move generation by traversing the strictly legal game
     // tree $\label{code:perft}$
-    private long perft(BitBoard board, int depth) {
+    private long perft(Game board, int depth) {
         long nodes = 0;
         LinkedList<Move> moveList = MoveGen.generateMoves(board, true);
         int nMoves = moveList.size();
